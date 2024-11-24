@@ -72,15 +72,23 @@ class CompanyController extends Controller
             'data' => $company,
         ]);
 
-        // return redirect()->route('companies.index');
     }
 
     public function destroy($id)
     {
-        $companyModel = new CompanyModel();
-        $company = $companyModel->findCompanyById($id);
-        $companyModel->deleteCompany($company); 
+        try {
+            $companyModel = new CompanyModel();
+            $company = $companyModel->find($id);
 
-        return redirect()->route('companies.index');
+            if (!$company) {
+                return response()->json(['message' => 'Company not found'], 404);
+            }
+
+            $company->deleteCompany($company);
+
+            return response()->json(['message' => 'Company deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error occurred while deleting company'], 500);
+        }
     }
 }

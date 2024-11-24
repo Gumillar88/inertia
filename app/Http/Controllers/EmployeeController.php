@@ -99,9 +99,21 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function destroy(EmployeeModel $employee)
+    public function destroy($id)
     {
-        $employee->delete();
-        return redirect()->route('employees.index');
+        try {
+            $employeeModel = new EmployeeModel();
+            $employee = $employeeModel->find($id);
+
+            if (!$employee) {
+                return response()->json(['message' => 'Employee not found'], 404);
+            }
+
+            $employee->deleteEmployee($employee);
+
+            return response()->json(['message' => 'Employee deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error occurred while deleting Employee'], 500);
+        }
     }
 }
