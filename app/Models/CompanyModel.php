@@ -36,14 +36,11 @@ class CompanyModel extends Model
 
     public function updateCompany($company, $data)
     {
-        // Jika ada file logo baru
         if (isset($data['logo'])) {
-            // Hapus logo lama jika ada
             if ($company->logo) {
                 Storage::delete('public/' . $company->logo);
             }
-
-            // Simpan logo baru
+            
             $data['logo'] = $data['logo']->store('logos', 'public');
         }
 
@@ -53,11 +50,6 @@ class CompanyModel extends Model
 
     public function deleteCompany($company)
     {
-        // Hapus logo jika ada
-        if ($company->logo) {
-            Storage::delete('public/' . $company->logo);
-        }
-
-        $company->delete(); // Hapus perusahaan
+        $company->delete(); 
     }
 }

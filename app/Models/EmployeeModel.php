@@ -47,4 +47,8 @@ class EmployeeModel extends Model
         return $employee;
     }
 
+    public function deleteEmployee($employee)
+    {
+        $employee->delete();
+    }
 }
