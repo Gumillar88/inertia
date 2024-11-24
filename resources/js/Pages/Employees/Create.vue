@@ -1,12 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-
 import { ref } from 'vue';
-import { useForm } from '@inertiajs/inertia-vue3';
+
+import Swal from 'sweetalert2';
 
 const props = defineProps({
-  companies: Array
+  companies: Array, 
 });
 
 const form = ref({
@@ -14,17 +14,49 @@ const form = ref({
   last_name: '',
   company_id: '',
   email: '',
-  phone: ''
+  phone: '',
 });
 
-// Menggunakan Inertia's useForm untuk menangani form submission
-const { post } = useForm();
+const submitForm = async () => {
+  const formData = new FormData();
+  formData.append('first_name', form.value.first_name);
+  formData.append('last_name', form.value.last_name);
+  formData.append('company_id', form.value.company_id);
+  formData.append('email', form.value.email);
+  formData.append('phone', form.value.phone);
 
-const submitForm = () => {
-  post('/employees', form.value);
+    try {
+    
+    const response = await axios.post('/employees/save', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+      },
+    });
+
+    Swal.fire({
+      title: 'Success!',
+      text: response.data.message || 'Employee saved successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK',
+    }).then(() => {
+        
+      window.location.href = '/employees';
+    });
+    } catch (error) {
+    
+    Swal.fire({
+      title: 'Error!',
+      text: error.response?.data?.message || 'An error occurred while saving data.',
+      icon: 'error',
+      confirmButtonText: 'OK',
+    });
+    console.error('Error saving employee:', error);
+  }
 };
-
 </script>
+
+
 <template>
     <Head title="Dashboard" />
 

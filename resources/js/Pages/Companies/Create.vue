@@ -5,25 +5,21 @@ import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
-// Mengambil CSRF token dari meta tag
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-// Menyiapkan form data
 const form = ref({
   name: '',
   email: '',
   website: '',
   phone: '',
-  logo: null, // Field logo
+  logo: null, 
 });
 
-// Fungsi untuk menangani perubahan file logo
 const handleFileChange = (event) => {
   const file = event.target.files[0];
-  form.value.logo = file || null; // Simpan file ke dalam form
+  form.value.logo = file || null; 
 };
 
-// Fungsi untuk submit form
 const submitForm = async () => {
   const formData = new FormData();
   formData.append('name', form.value.name);
@@ -31,30 +27,29 @@ const submitForm = async () => {
   formData.append('website', form.value.website);
   formData.append('phone', form.value.phone);
   if (form.value.logo) {
-    formData.append('logo', form.value.logo); // Menambahkan file logo jika ada
+    formData.append('logo', form.value.logo); 
   }
 
   try {
-    // Kirim form data menggunakan axios
+    
     const response = await axios.post('/companies/save', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'X-CSRF-TOKEN': csrfToken, // Menyertakan CSRF token
+        'X-CSRF-TOKEN': csrfToken, 
       },
     });
 
-    // Tangani response sukses
     Swal.fire({
       title: 'Success!',
       text: response.data.message || 'Company saved successfully!',
       icon: 'success',
       confirmButtonText: 'OK',
     }).then(() => {
-      // Redirect ke URL setelah popup ditutup
+      
       window.location.href = '/companies';
     });
   } catch (error) {
-    // Tangani error
+    
     Swal.fire({
       title: 'Error!',
       text: error.response?.data?.message || 'An error occurred while saving data.',
