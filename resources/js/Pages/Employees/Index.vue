@@ -1,15 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
-import { ref, reactive } from 'vue';
-import { usePage } from '@inertiajs/inertia-vue3';
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const props = defineProps({
   employees: Array
 });
 
-const { props: pageProps } = usePage();
 
 const columns = [
   { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
@@ -20,12 +19,43 @@ const columns = [
   { title: 'Actions', key: 'actions', scopedSlots: { customRender: 'actions' } },
 ];
 
-const editEmployee = (id) => {
-  console.log(`Editing employee with ID: ${id}`);
-};
+const deleteEmployee = async (id) => {
+    try {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        });
 
-const deleteEmployee = (id) => {
-  console.log(`Deleting employee with ID: ${id}`);
+        if (result.isConfirmed) {
+            const response = await axios.post(`/employees/delete/${id}`, {
+                _token: csrfToken
+            });
+
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Your Employee has been deleted.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '/employees';
+            });
+        }
+    } catch (error) {
+        console.error('Error deleting employee:', error);
+
+        // Tampilkan error jika terjadi masalah
+        Swal.fire({
+            title: 'Error!',
+            text: 'There was an error deleting the employee.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
 };
 </script>
 

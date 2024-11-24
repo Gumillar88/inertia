@@ -1,55 +1,51 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
-import { ref, reactive } from 'vue';
-import { usePage } from '@inertiajs/inertia-vue3';
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const props = defineProps({
   companies: Array
 });
 
-const { props: pageProps } = usePage();
+const deleteCompany = async (id) => {
+    try {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        });
 
-const columns = [
-    {
-        title: 'Company Name',
-        dataIndex: 'name',
-        key: 'name',
-    },
-    {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-    },
-    {
-        title: 'Website',
-        dataIndex: 'website',
-        key: 'website',
-    },
-    {
-        title: 'Actions',
-        key: 'actions',
-        scopedSlots: { customRender: 'actions' },
-    },
-];
+        if (result.isConfirmed) {
+            const response = await axios.post(`/companies/delete/${id}`, {
+                _token: csrfToken
+            });
 
-const pagination = reactive({
-    current: pageProps.companies?.current_page || 1,
-    pageSize: pageProps.companies?.per_page || 10,
-    total: pageProps.companies?.total || 0,
-});
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Your company has been deleted.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '/companies';
+            });
+        }
+    } catch (error) {
+        console.error('Error deleting company:', error);
 
-const handleTableChange = (pagination) => {
-    console.log('Pagination Changed: ', pagination);
-};
-
-const editCompany = (id) => {
-    console.log(`Editing company with ID: ${id}`);
-};
-
-const deleteCompany = (id) => {
-    console.log(`Deleting company with ID: ${id}`);
+        // Tampilkan error jika terjadi masalah
+        Swal.fire({
+            title: 'Error!',
+            text: 'There was an error deleting the company.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
 };
 </script>
 
