@@ -60,9 +60,10 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $employee = EmployeeModel::find($id);
+        $employeeModel = new EmployeeModel();
+        $employee = $employeeModel->findEmployeeById($id); 
         
         $companies = CompanyModel::all();
 
@@ -72,12 +73,12 @@ class EmployeeController extends Controller
         }
 
         return Inertia::render('Employees/Edit', [
-            'employee' => $employee ? $employee->toArray() : null,
+            'employee' => $employee ? $employee : null,
             'companies' => $companies->toArray(),
         ]);
     }
 
-    public function update(Request $request, EmployeeModel $employee)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
@@ -87,9 +88,15 @@ class EmployeeController extends Controller
             'phone' => 'nullable|string|max:15',
         ]);
 
-        $employee->update($validated);
+        $employeeModel = new EmployeeModel();
+        $employee = $employeeModel->findEmployeeById($id);
+        $employee = $employeeModel->updateEmployee($employee, $validated);
 
-        return redirect()->route('employees.index');
+        return response()->json([
+            'success' => true,
+            'message' => 'Employee updated successfully!',
+            'data' => $employee,
+        ]);
     }
 
     public function destroy(EmployeeModel $employee)

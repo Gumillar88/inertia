@@ -23,6 +23,11 @@ class EmployeeModel extends Model
         return $this->all();
     }
 
+    public function findEmployeeById($employeeId)
+    {
+        return $this->findOrFail($employeeId); // Cari perusahaan berdasarkan ID
+    }
+
     public static function createEmployee(array $data)
     {
         return self::create([
@@ -34,14 +39,12 @@ class EmployeeModel extends Model
         ]);
     }
 
-    public function updateEmployee(array $data)
+    public function updateEmployee($employee, $data)
     {
-        return $this->update([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'company_id' => $data['company_id'],
-            'email' => $data['email'] ?? null,
-            'phone' => $data['phone'] ?? null,
-        ]);
+
+        $employee->update($data);
+
+        return $employee;
     }
+
 }

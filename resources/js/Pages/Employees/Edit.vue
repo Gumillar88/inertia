@@ -1,38 +1,25 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
+
 import Swal from 'sweetalert2';
 
-// Mendefinisikan props
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 const props = defineProps({
-  employee: Object, // employee adalah objek, bukan array
-  companies: Array, // companies tetap array
+  employee: Object, 
+  companies: Array, 
 });
 
-// Menginisialisasi form
 const form = ref({
-  first_name: '',
-  last_name: '',
-  company_id: '',
-  email: '',
-  phone: '',
+  first_name: props.employee.first_name || '',
+  last_name: props.employee.last_name || '',
+  company_id: props.employee.company_id || '',
+  email: props.employee.email || '',
+  phone: props.employee.phone || '',
 });
 
-// Mengisi form dengan data employee saat komponen dimuat
-onMounted(() => {
-  if (props.employee) {
-    form.value = {
-      first_name: props.employee.first_name || '',
-      last_name: props.employee.last_name || '',
-      company_id: props.employee.company_id || '',
-      email: props.employee.email || '',
-      phone: props.employee.phone || '',
-    };
-  }
-});
-
-// Fungsi untuk mengirim form
 const submitForm = async () => {
   const formData = new FormData();
   formData.append('first_name', form.value.first_name);
@@ -41,11 +28,12 @@ const submitForm = async () => {
   formData.append('email', form.value.email);
   formData.append('phone', form.value.phone);
 
-  try {
+    try {
+    
     const response = await axios.post(`/employees/update/${props.employee.id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'X-CSRF-TOKEN': csrfToken,
       },
     });
 
@@ -55,16 +43,18 @@ const submitForm = async () => {
       icon: 'success',
       confirmButtonText: 'OK',
     }).then(() => {
+        
       window.location.href = '/employees';
     });
-  } catch (error) {
+    } catch (error) {
+    
     Swal.fire({
       title: 'Error!',
-      text: error.response?.data?.message || 'An error occurred while updating the employee.',
+      text: error.response?.data?.message || 'An error occurred while saving data.',
       icon: 'error',
       confirmButtonText: 'OK',
     });
-    console.error('Error updating employee:', error);
+    console.error('Error saving employee:', error);
   }
 };
 </script>

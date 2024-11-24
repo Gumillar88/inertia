@@ -64,29 +64,17 @@ const submitForm = async () => {
   }
 };
 
-// const submitForm = () => {
-//   const formData = new FormData();
-//   formData.append('name', form.value.name);
-//   formData.append('email', form.value.email);
-//   formData.append('website', form.value.website);
-//   formData.append('phone', form.value.phone);
-//   if (form.value.logo) {
-//     formData.append('logo', form.value.logo);
-//   }
 
-//   put(`/companies/update/${props.company.id}`, formData);
-// };
-
-onMounted(() => {
-  // Inisialisasi form dengan data perusahaan yang ada
-  form.value = {
-    name: props.company.name,
-    email: props.company.email,
-    website: props.company.website,
-    phone: props.company.phone,
-    logo: null // Inisialisasi logo menjadi null pada edit
-  };
-});
+// onMounted(() => {
+  
+//   form.value = {
+//     name: props.company.name,
+//     email: props.company.email,
+//     website: props.company.website,
+//     phone: props.company.phone,
+//     logo: null // Inisialisasi logo menjadi null pada edit
+//   };
+// });
 
 </script>
 
