@@ -18,6 +18,11 @@ class EmployeeModel extends Model
         return $this->belongsTo(CompanyModel::class);
     }
 
+    public function getAll()
+    {
+        return $this->all();
+    }
+
     public static function createEmployee(array $data)
     {
         return self::create([

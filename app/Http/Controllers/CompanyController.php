@@ -14,7 +14,7 @@ class CompanyController extends Controller
     public function index()
     {
         $companyModel = new CompanyModel();
-        $companies = $companyModel->getAll(); // Mengambil semua perusahaan
+        $companies = CompanyModel::all(); // Mengambil semua perusahaan
         return Inertia::render('Companies/Index', [
             'companies' => $companies
         ]);

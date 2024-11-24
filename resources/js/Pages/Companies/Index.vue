@@ -10,7 +10,6 @@ const props = defineProps({
 });
 
 const { props: pageProps } = usePage();
-const companies = ref(pageProps.companies || []);
 
 const columns = [
     {
@@ -96,43 +95,28 @@ const deleteCompany = (id) => {
                         </div>
                     </div>
 
-                    <!-- Tabel Companies -->
                     <table class="min-w-full table-auto">
                         <thead>
                         <tr class="bg-gray-100">
-                            <th class="py-2 px-4 border-b">Company Name</th>
-                            <th class="py-2 px-4 border-b">Email</th>
-                            <th class="py-2 px-4 border-b">Website</th>
-                            <th class="py-2 px-4 border-b">Actions</th>
+                            <th class="text-left py-2 px-4 border-b">Company Name</th>
+                            <th class="text-left py-2 px-4 border-b">Email</th>
+                            <th class="text-left py-2 px-4 border-b">Website</th>
+                            <th class="text-left py-2 px-4 border-b">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="company in companies" :key="company.id">
-                            <td class="py-2 px-4 border-b">{{ company.name }}</td>
-                            <td class="py-2 px-4 border-b">{{ company.email }}</td>
-                            <td class="py-2 px-4 border-b">{{ company.website }}</td>
-                            <td class="py-2 px-4 border-b">
-                            <!-- Tombol Edit dan Delete per row -->
-                            <a href="#" class="text-blue-500" @click="editCompany(company.id)">Edit</a>
-                            <a href="#" class="text-red-500 ml-2" @click="deleteCompany(company.id)">Delete</a>
-                            </td>
-                        </tr>
-                        <!-- Jika tidak ada data -->
-                        <tr v-if="companies.length === 0">
-                            <td colspan="4" class="py-2 px-4 border-b text-center">No companies found.</td>
-                        </tr>
+                            <tr v-for="company in companies" :key="company.id">
+                                <td class="text-centen py-2 px-4 border-b">{{ company.name }}</td>
+                                <td class="text-centen py-2 px-4 border-b">{{ company.email }}</td>
+                                <td class="text-centen py-2 px-4 border-b">{{ company.website }}</td>
+																<td class="text-centen py-2 px-4 border-b">
+																	<a href="/companies/edit?id=${editCompany(company.id)}" class="text-blue-500" @click="editCompany(company.id)">Edit</a>
+																	<a href="#" class="text-red-500 ml-2" @click="deleteCompany(company.id)">Delete</a>
+																</td>
+                            </tr>
                         </tbody>
                     </table>
 
-                    <!-- Pagination -->
-                    <div class="mt-4">
-                        <pagination 
-                        :current="pagination.current" 
-                        :page-size="pagination.pageSize" 
-                        :total="pagination.total" 
-                        @change="handleTableChange" 
-                        />
-                    </div>
                     </div>
                 </div>
                 </div>

@@ -12,24 +12,23 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = EmployeeModel::with('company')->paginate(10);
+        $employees = EmployeeModel::all();
 
-        $employeeAttributes = array_map(function ($employee) {
+        $employeeAttributes = $employees->map(function ($employee) {
             return [
-                'id' => $employee['id'],
-                'first_name' => $employee['first_name'],
-                'last_name' => $employee['last_name'],
-                'company_id' => $employee['company_id'],
-                'email' => $employee['email'],
-                'phone' => $employee['phone'],
-                'created_at' => $employee['created_at'] ? $employee['created_at']->format('Y-m-d H:i:s') : null,
-                'updated_at' => $employee['updated_at'] ? $employee['updated_at']->format('Y-m-d H:i:s') : null,
+                'id' => $employee->id,
+                'first_name' => $employee->first_name,
+                'last_name' => $employee->last_name,
+                'company_id' => $employee->company_id,
+                'email' => $employee->email,
+                'phone' => $employee->phone,
+                'created_at' => $employee->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $employee->updated_at->format('Y-m-d H:i:s'),
             ];
-        }, $employees->items());
-
+        });
+        
         return Inertia::render('Employees/Index', [
-            'employees' => $employeeAttributes,
-            'pagination' => $employees,
+            'employees' => $employees,
         ]);
 
     }
