@@ -6,14 +6,12 @@ import { usePage } from '@inertiajs/inertia-vue3';
 
 import { shallowRef } from 'vue';
 
-// Mengambil data dari Inertia
 const { props } = usePage();
 const employees = ref(props.employees || []);
 const pagination = shallowRef(props.pagination || { current_page: 1, per_page: 10, total: 0 });
 
 console.log("this data: " + employees);
 
-// Kolom Tabel
 const columns = [
   { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
   { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
@@ -23,12 +21,10 @@ const columns = [
   { title: 'Actions', key: 'actions', scopedSlots: { customRender: 'actions' } },
 ];
 
-// Fungsi untuk menangani perubahan halaman
 const handleTableChange = (pagination) => {
   console.log('Pagination Changed: ', pagination);
 };
 
-// Fungsi untuk edit dan delete
 const editEmployee = (id) => {
   console.log(`Editing employee with ID: ${id}`);
 };
@@ -92,9 +88,7 @@ const deleteEmployee = (id) => {
               </thead>
               <tbody>
                 <tr v-for="employee in employees" :key="employee.id">
-                  <!-- Looping data employee untuk setiap kolom -->
                   <td v-for="column in columns" :key="column.key" class="py-2 px-4 border-b">
-                    <!-- Handling custom render (untuk company name) -->
                     <span v-if="column.customRender">
                       {{ column.customRender(null, employee) }}
                     </span>
@@ -103,12 +97,10 @@ const deleteEmployee = (id) => {
                     </span>
                   </td>
                   <td class="py-2 px-4 border-b">
-                    <!-- Tombol Edit dan Delete per row -->
                     <a href="#" class="text-blue-500" @click="editEmployee(employee.id)">Edit</a>
                     <a href="#" class="text-red-500 ml-2" @click="deleteEmployee(employee.id)">Delete</a>
                   </td>
                 </tr>
-                <!-- Jika tidak ada data -->
                 <tr v-if="employees.length === 0">
                   <td colspan="7" class="py-2 px-4 border-b text-center">No employees found.</td>
                 </tr>
