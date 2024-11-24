@@ -3,11 +3,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 
+
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const props = defineProps({
 	employees: Array,
 	companies: Array, 
+	name: Object,
 });
 
 
@@ -49,7 +51,6 @@ const deleteEmployee = async (id) => {
     } catch (error) {
         console.error('Error deleting employee:', error);
 
-        // Tampilkan error jika terjadi masalah
         Swal.fire({
             title: 'Error!',
             text: 'There was an error deleting the employee.',
@@ -60,10 +61,29 @@ const deleteEmployee = async (id) => {
 };
 </script>
 
-<template>
-  <Head title="Employees" />
+<script>
+import EmployeeNotifications from '@/Pages/EmployeeNotifications.vue';
 
+export default {
+  components: {
+    EmployeeNotifications
+  }
+};
+</script>
+
+<template>
+	
+  <Head title="Employees" />
+	
   <AuthenticatedLayout>
+		<!-- Notification Component -->
+    <div>
+      <EmployeeNotifications 
+        v-for="(message, index) in messages" 
+        :key="index" 
+        :message="message" 
+      />
+    </div>
     <template #header>
       <ul class="flex space-x-6">
         <li>

@@ -4,21 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Events\EmployeeAdded;
 
 use App\Models\EmployeeModel;
 use App\Models\CompanyModel;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $employees = EmployeeModel::all();
 
         $companies = CompanyModel::all();
+
+        if (!empty($request->get('name'))) {
+            $name = $request->get('name');
+        } else {
+            $name = '';
+        }
         
         return Inertia::render('Employees/Index', [
             'employees' => $employees,
             'companies' => $companies->toArray(),
+            'name'      => $name,
         ]);
 
     }
@@ -42,6 +50,9 @@ class EmployeeController extends Controller
         ]);
 
         $employee = EmployeeModel::create($validated);
+
+        // Emit event notifikasi
+        broadcast(new EmployeeAdded('Employee added successfully!'));
 
         return response()->json([
             'success' => true,
@@ -80,6 +91,12 @@ class EmployeeController extends Controller
         $employeeModel = new EmployeeModel();
         $employee = $employeeModel->findEmployeeById($id);
         $employee = $employeeModel->updateEmployee($employee, $validated);
+
+        event(new EmployeeAdded(['message' => 'Employee updated successfully!']));
+        // Emit event notifikasi
+        broadcast(new EmployeeAdded('Employee updated successfully!'));
+
+        
 
         return response()->json([
             'success' => true,
