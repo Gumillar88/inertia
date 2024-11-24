@@ -13,14 +13,29 @@ class EmployeeController extends Controller
     public function index()
     {
         $employees = EmployeeModel::with('company')->paginate(10);
+        // dd($employees->items());
+
+        $employeeAttributes = array_map(function ($employee) {
+            // Mengambil hanya atribut yang diinginkan
+            return [
+                'id' => $employee['id'],
+                'first_name' => $employee['first_name'],
+                'last_name' => $employee['last_name'],
+                'company_id' => $employee['company_id'],
+                'email' => $employee['email'],
+                'phone' => $employee['phone'],
+                'created_at' => $employee['created_at'] ? $employee['created_at']->format('Y-m-d H:i:s') : null,
+                'updated_at' => $employee['updated_at'] ? $employee['updated_at']->format('Y-m-d H:i:s') : null,
+            ];
+        }, $employees->items());
+
+        // Debugging hasil
+        // dd($employeeAttributes);
         return Inertia::render('Employees/Index', [
-            'employees' => $employees->items(),
-            'pagination' => [
-                'current_page' => $employees->currentPage(),
-                'per_page' => $employees->perPage(),
-                'total' => $employees->total(),
-            ],
+            'employees' => $employeeAttributes,
+            'pagination' => $employees,
         ]);
+
     }
 
     public function create()

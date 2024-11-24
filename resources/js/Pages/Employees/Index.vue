@@ -1,23 +1,19 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 
-const props = defineProps({
-  employees: Array,
-  pagination: Object,
-});
+import { shallowRef } from 'vue';
 
-const { props: pageProps } = usePage();
+// Mengambil data dari Inertia
+const { props } = usePage();
+const employees = ref(props.employees || []);
+const pagination = shallowRef(props.pagination || { current_page: 1, per_page: 10, total: 0 });
 
-const employees = ref(pageProps.employees || []);
-const pagination = reactive({
-  current: pageProps.pagination?.current_page || 1,
-  pageSize: pageProps.pagination?.per_page || 10,
-  total: pageProps.pagination?.total || 0,
-});
+console.log("this data: " + employees);
 
+// Kolom Tabel
 const columns = [
   { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
   { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
@@ -27,10 +23,12 @@ const columns = [
   { title: 'Actions', key: 'actions', scopedSlots: { customRender: 'actions' } },
 ];
 
+// Fungsi untuk menangani perubahan halaman
 const handleTableChange = (pagination) => {
   console.log('Pagination Changed: ', pagination);
 };
 
+// Fungsi untuk edit dan delete
 const editEmployee = (id) => {
   console.log(`Editing employee with ID: ${id}`);
 };
@@ -38,11 +36,10 @@ const editEmployee = (id) => {
 const deleteEmployee = (id) => {
   console.log(`Deleting employee with ID: ${id}`);
 };
-
 </script>
 
 <template>
-  <Head title="Dashboard" />
+  <Head title="Employees" />
 
   <AuthenticatedLayout>
     <template #header>
@@ -64,11 +61,11 @@ const deleteEmployee = (id) => {
         </li>
       </ul>
     </template>
+
     <div class="py-12">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
           <div class="p-6 text-gray-900">
-
             <!-- Dashboard Header -->
             <div class="flex justify-between items-center mb-6">
               <div>
@@ -87,21 +84,24 @@ const deleteEmployee = (id) => {
             <table class="min-w-full table-auto">
               <thead>
                 <tr class="bg-gray-100">
-                  <th class="py-2 px-4 border-b">First Name</th>
-                  <th class="py-2 px-4 border-b">Last Name</th>
-                  <th class="py-2 px-4 border-b">Company</th>
-                  <th class="py-2 px-4 border-b">Email</th>
-                  <th class="py-2 px-4 border-b">Phone</th>
-                  <th class="py-2 px-4 border-b">Actions</th>
+                  <!-- Looping kolom tabel -->
+                  <th v-for="column in columns" :key="column.key" class="py-2 px-4 border-b">
+                    {{ column.title }}
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="employee in employees" :key="employee.id">
-                  <td class="py-2 px-4 border-b">{{ employee.first_name }}</td>
-                  <td class="py-2 px-4 border-b">{{ employee.last_name }}</td>
-                  <td class="py-2 px-4 border-b">{{ employee.company ? employee.company.name : 'N/A' }}</td>
-                  <td class="py-2 px-4 border-b">{{ employee.email }}</td>
-                  <td class="py-2 px-4 border-b">{{ employee.phone }}</td>
+                  <!-- Looping data employee untuk setiap kolom -->
+                  <td v-for="column in columns" :key="column.key" class="py-2 px-4 border-b">
+                    <!-- Handling custom render (untuk company name) -->
+                    <span v-if="column.customRender">
+                      {{ column.customRender(null, employee) }}
+                    </span>
+                    <span v-else>
+                      {{ employee[column.dataIndex] || 'N/A' }}
+                    </span>
+                  </td>
                   <td class="py-2 px-4 border-b">
                     <!-- Tombol Edit dan Delete per row -->
                     <a href="#" class="text-blue-500" @click="editEmployee(employee.id)">Edit</a>
@@ -110,7 +110,7 @@ const deleteEmployee = (id) => {
                 </tr>
                 <!-- Jika tidak ada data -->
                 <tr v-if="employees.length === 0">
-                  <td colspan="6" class="py-2 px-4 border-b text-center">No employees found.</td>
+                  <td colspan="7" class="py-2 px-4 border-b text-center">No employees found.</td>
                 </tr>
               </tbody>
             </table>
@@ -118,8 +118,8 @@ const deleteEmployee = (id) => {
             <!-- Pagination -->
             <div class="mt-4">
               <pagination 
-                :current="pagination.current" 
-                :page-size="pagination.pageSize" 
+                :current="pagination.current_page" 
+                :page-size="pagination.per_page" 
                 :total="pagination.total" 
                 @change="handleTableChange" 
               />
