@@ -14,7 +14,7 @@ class CompanyController extends Controller
     public function index()
     {
         $companyModel = new CompanyModel();
-        $companies = CompanyModel::all(); // Mengambil semua perusahaan
+        $companies = CompanyModel::all(); 
         return Inertia::render('Companies/Index', [
             'companies' => $companies
         ]);
@@ -35,7 +35,7 @@ class CompanyController extends Controller
         ]);
 
         $companyModel = new CompanyModel();
-        $company = $companyModel->createCompany($validated); // Menyimpan perusahaan
+        $company = $companyModel->createCompany($validated);
 
         return response()->json([
             'success' => true,
@@ -47,7 +47,7 @@ class CompanyController extends Controller
     public function edit($id)
     {
         $companyModel = new CompanyModel();
-        $company = $companyModel->findCompanyById($id); // Mencari perusahaan berdasarkan ID
+        $company = $companyModel->findCompanyById($id); 
         return Inertia::render('Companies/Edit', [
             'company' => $company
         ]);
@@ -63,8 +63,8 @@ class CompanyController extends Controller
         ]);
 
         $companyModel = new CompanyModel();
-        $company = $companyModel->findCompanyById($id); // Mencari perusahaan berdasarkan ID
-        $company = $companyModel->updateCompany($company, $validated); // Memperbarui perusahaan
+        $company = $companyModel->findCompanyById($id);
+        $company = $companyModel->updateCompany($company, $validated); 
 
         return redirect()->route('companies.index');
     }
@@ -72,8 +72,8 @@ class CompanyController extends Controller
     public function destroy($id)
     {
         $companyModel = new CompanyModel();
-        $company = $companyModel->findCompanyById($id); // Mencari perusahaan berdasarkan ID
-        $companyModel->deleteCompany($company); // Menghapus perusahaan
+        $company = $companyModel->findCompanyById($id);
+        $companyModel->deleteCompany($company); 
 
         return redirect()->route('companies.index');
     }
