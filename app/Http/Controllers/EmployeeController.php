@@ -13,10 +13,8 @@ class EmployeeController extends Controller
     public function index()
     {
         $employees = EmployeeModel::with('company')->paginate(10);
-        // dd($employees->items());
 
         $employeeAttributes = array_map(function ($employee) {
-            // Mengambil hanya atribut yang diinginkan
             return [
                 'id' => $employee['id'],
                 'first_name' => $employee['first_name'],
@@ -29,8 +27,6 @@ class EmployeeController extends Controller
             ];
         }, $employees->items());
 
-        // Debugging hasil
-        // dd($employeeAttributes);
         return Inertia::render('Employees/Index', [
             'employees' => $employeeAttributes,
             'pagination' => $employees,
