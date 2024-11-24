@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/employees/save', [EmployeeController::class, 'store'])->name('employees.store');
     Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
     Route::post('/employees/update/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-    Route::delete('/employees/delete/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+    Route::post('/employees/delete/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
     // Routes for Company
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/companies/save', [CompanyController::class, 'store'])->name('companies.store');
     Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
     Route::post('/companies/update/{company}', [CompanyController::class, 'update'])->name('companies.update');
-    Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+    Route::post('/companies/delete/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
 });
 
 require __DIR__ . '/auth.php';
