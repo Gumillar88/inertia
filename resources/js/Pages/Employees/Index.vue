@@ -85,8 +85,8 @@ const deleteEmployee = (id) => {
 										<td class="text-centen py-2 px-4 border-b">{{ employee.email }}</td>
 										<td class="text-centen py-2 px-4 border-b">{{ employee.phone }}</td>
 										<td class="text-centen py-2 px-4 border-b">
-											<a :href="`/employees/${employee.id}/edit`" class="text-blue-500" @click="editEmployee(employee.id)">Edit</a>
-											<a href="#" class="text-red-500 ml-2" @click="deleteEmployee(employee.id)">Delete</a>
+											<a :href="`/employees/${employee.id}/edit`" class="bg-green-500 text-white px-4 p-2 m-2 rounded-md" @click="editEmployee(employee.id)">Edit</a>
+											<a href="#" class="bg-red-500 text-white px-4 p-2 m-2 rounded-md" @click="deleteEmployee(employee.id)">Delete</a>
 										</td>
 								</tr>
               </tbody>
