@@ -12,9 +12,14 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = EmployeeModel::with('company')->get();
+        $employees = EmployeeModel::with('company')->paginate(10);
         return Inertia::render('Employees/Index', [
-            'employees' => $employees
+            'employees' => $employees->items(),
+            'pagination' => [
+                'current_page' => $employees->currentPage(),
+                'per_page' => $employees->perPage(),
+                'total' => $employees->total(),
+            ],
         ]);
     }
 
@@ -36,9 +41,13 @@ class EmployeeController extends Controller
             'phone' => 'nullable|string|max:15',
         ]);
 
-        EmployeeModel::create($validated);
+        $employee = EmployeeModel::create($validated);
 
-        return redirect()->route('employees.index');
+        return response()->json([
+            'success' => true,
+            'message' => 'Employee saved successfully!',
+            'data' => $employee,
+        ]);
     }
 
     public function edit(EmployeeModel $employee)
