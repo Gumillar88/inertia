@@ -6,7 +6,8 @@ import Swal from 'sweetalert2';
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const props = defineProps({
-  employees: Array
+	employees: Array,
+	companies: Array, 
 });
 
 
@@ -111,7 +112,7 @@ const deleteEmployee = async (id) => {
                 <tr v-for="employee in employees" :key="employee.id">
 										<td class="text-centen py-2 px-4 border-b">{{ employee.first_name }}</td>
 										<td class="text-centen py-2 px-4 border-b">{{ employee.last_name }}</td>
-										<td class="text-centen py-2 px-4 border-b">{{ employee.company_id }}</td>
+										<td class="text-centen py-2 px-4 border-b">{{ companies.find(company => company.id === employee.company_id)?.name || '-' }}</td>
 										<td class="text-centen py-2 px-4 border-b">{{ employee.email }}</td>
 										<td class="text-centen py-2 px-4 border-b">{{ employee.phone }}</td>
 										<td class="text-centen py-2 px-4 border-b">

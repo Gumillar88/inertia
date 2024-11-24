@@ -14,21 +14,11 @@ class EmployeeController extends Controller
     {
         $employees = EmployeeModel::all();
 
-        $employeeAttributes = $employees->map(function ($employee) {
-            return [
-                'id' => $employee->id,
-                'first_name' => $employee->first_name,
-                'last_name' => $employee->last_name,
-                'company_id' => $employee->company_id,
-                'email' => $employee->email,
-                'phone' => $employee->phone,
-                'created_at' => $employee->created_at->format('Y-m-d H:i:s'),
-                'updated_at' => $employee->updated_at->format('Y-m-d H:i:s'),
-            ];
-        });
+        $companies = CompanyModel::all();
         
         return Inertia::render('Employees/Index', [
             'employees' => $employees,
+            'companies' => $companies->toArray(),
         ]);
 
     }
@@ -66,8 +56,7 @@ class EmployeeController extends Controller
         $employee = $employeeModel->findEmployeeById($id); 
         
         $companies = CompanyModel::all();
-
-        // Jika employee tidak ditemukan, kembalikan halaman dengan pesan error
+        
         if (!$employee) {
             return redirect('/employees')->with('error', 'Employee not found');
         }
