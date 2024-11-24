@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 // Mengambil CSRF token dari meta tag
@@ -13,8 +14,14 @@ const form = ref({
   email: '',
   website: '',
   phone: '',
-  logo: null // Field logo
+  logo: null, // Field logo
 });
+
+// Fungsi untuk menangani perubahan file logo
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  form.value.logo = file || null; // Simpan file ke dalam form
+};
 
 // Fungsi untuk submit form
 const submitForm = async () => {
@@ -29,17 +36,31 @@ const submitForm = async () => {
 
   try {
     // Kirim form data menggunakan axios
-    const response = await axios.post('/companies', formData, {
+    const response = await axios.post('/companies/save', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'X-CSRF-TOKEN': csrfToken // Menyertakan CSRF token
-      }
+        'X-CSRF-TOKEN': csrfToken, // Menyertakan CSRF token
+      },
     });
 
     // Tangani response sukses
-    console.log('Company created successfully:', response.data);
+    Swal.fire({
+      title: 'Success!',
+      text: response.data.message || 'Company saved successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK',
+    }).then(() => {
+      // Redirect ke URL setelah popup ditutup
+      window.location.href = '/companies';
+    });
   } catch (error) {
     // Tangani error
+    Swal.fire({
+      title: 'Error!',
+      text: error.response?.data?.message || 'An error occurred while saving data.',
+      icon: 'error',
+      confirmButtonText: 'OK',
+    });
     console.error('Error creating company:', error);
   }
 };
@@ -107,7 +128,7 @@ const submitForm = async () => {
               <!-- Logo -->
               <div class="mb-4">
                 <label for="logo" class="block text-sm font-medium text-gray-700">Company Logo</label>
-                <input type="file" id="logo" name="logo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" @change="e => form.value.logo = e.target.files[0]" />
+                <input type="file" id="logo" name="logo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" @change="handleFileChange" />
               </div>
 
               <!-- Buttons -->

@@ -40,9 +40,13 @@ class CompanyController extends Controller
             $validated['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
-        CompanyModel::create($validated);
+        $company = CompanyModel::create($validated);
 
-        return redirect()->route('companies.index');
+        return response()->json([
+            'success' => true,
+            'message' => 'Company saved successfully!',
+            'data' => $company,
+        ]);
     }
 
     // Menampilkan form untuk edit company
