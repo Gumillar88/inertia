@@ -2,36 +2,80 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
+import Swal from 'sweetalert2';
+import axios from 'axios';
 import { ref, onMounted } from 'vue';
-import { useForm } from '@inertiajs/inertia-vue3';
+
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const props = defineProps({
   company: Object
 });
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  form.value.logo = file || null; 
+};
 
 const form = ref({
   name: props.company.name || '',
   email: props.company.email || '',
   website: props.company.website || '',
   phone: props.company.phone || '',
-  logo: null // Field logo
 });
 
-// Menggunakan Inertia's useForm untuk menangani form submission
-const { put } = useForm();
-
-const submitForm = () => {
+const submitForm = async () => {
   const formData = new FormData();
   formData.append('name', form.value.name);
   formData.append('email', form.value.email);
   formData.append('website', form.value.website);
   formData.append('phone', form.value.phone);
   if (form.value.logo) {
-    formData.append('logo', form.value.logo);
+    formData.append('logo', form.value.logo); 
   }
 
-  put(`/companies/${props.company.id}`, formData);
+  try {
+    
+    const response = await axios.post(`/companies/update/${props.company.id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CSRF-TOKEN': csrfToken, 
+      },
+    });
+
+    Swal.fire({
+      title: 'Success!',
+      text: response.data.message || 'Company updated successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK',
+    }).then(() => {
+      
+      window.location.href = '/companies';
+    });
+  } catch (error) {
+    
+    Swal.fire({
+      title: 'Error!',
+      text: error.response?.data?.message || 'An error occurred while saving data.',
+      icon: 'error',
+      confirmButtonText: 'OK',
+    });
+    console.error('Error creating company:', error);
+  }
 };
+
+// const submitForm = () => {
+//   const formData = new FormData();
+//   formData.append('name', form.value.name);
+//   formData.append('email', form.value.email);
+//   formData.append('website', form.value.website);
+//   formData.append('phone', form.value.phone);
+//   if (form.value.logo) {
+//     formData.append('logo', form.value.logo);
+//   }
+
+//   put(`/companies/update/${props.company.id}`, formData);
+// };
 
 onMounted(() => {
   // Inisialisasi form dengan data perusahaan yang ada
@@ -100,7 +144,7 @@ onMounted(() => {
 
                             <div class="mb-4">
                                 <label for="logo" class="block text-sm font-medium text-gray-700">Company Logo</label>
-                                <input type="file" id="logo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" @change="e => form.value.logo = e.target.files[0]" />
+                                <input type="file" id="logo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" @change="handleFileChange"  />
                                 <img v-if="props.company.logo" :src="`/storage/${props.company.logo}`" alt="Logo" class="mt-2 w-32 h-32 object-cover" />
                             </div>
 

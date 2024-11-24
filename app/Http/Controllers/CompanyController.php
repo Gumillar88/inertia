@@ -64,9 +64,15 @@ class CompanyController extends Controller
 
         $companyModel = new CompanyModel();
         $company = $companyModel->findCompanyById($id);
-        $company = $companyModel->updateCompany($company, $validated); 
+        $company = $companyModel->updateCompany($company, $validated);
 
-        return redirect()->route('companies.index');
+        return response()->json([
+            'success' => true,
+            'message' => 'Company updated successfully!',
+            'data' => $company,
+        ]);
+
+        // return redirect()->route('companies.index');
     }
 
     public function destroy($id)

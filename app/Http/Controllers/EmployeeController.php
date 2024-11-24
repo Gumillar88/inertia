@@ -60,12 +60,20 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function edit(EmployeeModel $employee)
+    public function edit($id)
     {
+        $employee = EmployeeModel::find($id);
+        
         $companies = CompanyModel::all();
+
+        // Jika employee tidak ditemukan, kembalikan halaman dengan pesan error
+        if (!$employee) {
+            return redirect('/employees')->with('error', 'Employee not found');
+        }
+
         return Inertia::render('Employees/Edit', [
-            'employee' => $employee,
-            'companies' => $companies
+            'employee' => $employee ? $employee->toArray() : null,
+            'companies' => $companies->toArray(),
         ]);
     }
 
